@@ -1,0 +1,30 @@
+version: "3.9"
+
+# Application container running Golang 1.20.1 and Database container running mysql 8.0
+services:
+  app:
+    image: golang:1.20.1
+    container_name: app
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/go/src/app
+    working_dir: /go/src/app
+    command: go run main.go
+    depends_on:
+      - db
+
+  db:
+    image: mysql:8.0
+    container_name: db
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: golang_app_db
+      MYSQL_USER: golang_app_user
+      MYSQL_PASSWORD: golang_app_password
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
